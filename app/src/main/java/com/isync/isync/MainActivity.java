@@ -1,6 +1,8 @@
 package com.isync.isync;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 
@@ -14,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.isync.isync.databinding.ActivityMainBinding;
+import com.isync.isync.helper.Global;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +51,20 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(TextUtils.isEmpty(Global.g_token)){
+            openLogin();
+        }
+    }
+
+    void openLogin(){
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+    }
+
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

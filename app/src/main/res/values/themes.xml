@@ -22,4 +22,8 @@
     <style name="Theme.ISync.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.ISync.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TextViewTheme">
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>
