@@ -63,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, data.message, Toast.LENGTH_LONG).show();
                         }else{
                             Global.g_token = data.token;
-                            Global.bLoggedIn = true;
                             finish();
                         }
                     }
