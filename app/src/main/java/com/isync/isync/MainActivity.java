@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -30,6 +31,7 @@ import com.isync.isync.DataObject.ResponseData;
 import com.isync.isync.DataObject.Snapshot;
 import com.isync.isync.databinding.ActivityMainBinding;
 import com.isync.isync.helper.Global;
+import com.isync.isync.ui.dashboard.DashboardViewModel;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONObject;
@@ -43,11 +45,14 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     KProgressHUD hud;
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    private DashboardViewModel dashboardViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hud = KProgressHUD.create(MainActivity.this).setDimAmount(0.5f);
+
+        dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -108,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, data.message, Toast.LENGTH_LONG).show();
                         }else{
                             hud.dismiss();
+                            dashboardViewModel.setSales(data.sales.daily_sales);
                             Global.dashboardData = data;
                             getSnapshot();
                         }
@@ -150,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         }else{
                             hud.dismiss();
                             Global.snapshot = data;
+                            dashboardViewModel.setSnapshot(data.snapshot);
                             getDailyPerformance();
                         }
                     }

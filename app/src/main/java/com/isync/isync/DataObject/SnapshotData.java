@@ -6,5 +6,5 @@ import java.io.Serializable;
 
 public class SnapshotData implements Serializable {
     @Expose public String[] labels;
-    @Expose public int[] data;
+    @Expose public float[] data;
 }
