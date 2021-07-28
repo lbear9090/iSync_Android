@@ -197,6 +197,7 @@ public class DashboardFragment extends Fragment {
             set1.notifyDataSetChanged();
             lineChart.getData().notifyDataChanged();
             lineChart.notifyDataSetChanged();
+            lineChart.invalidate();
         }
     }
     @Override
