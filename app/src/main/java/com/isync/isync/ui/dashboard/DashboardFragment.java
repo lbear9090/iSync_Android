@@ -32,6 +32,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
+import com.isync.isync.DataObject.DashboardData;
 import com.isync.isync.DataObject.SnapshotData;
 import com.isync.isync.R;
 import com.isync.isync.databinding.FragmentDashboardBinding;
@@ -47,7 +48,7 @@ public class DashboardFragment extends Fragment {
 
     LineChart lineChart;
     Spinner spinner;
-    TextView txtTotalSale;
+    TextView txtTotalSale, txtEmailSent;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
@@ -58,7 +59,7 @@ public class DashboardFragment extends Fragment {
         lineChart = binding.chart;
         spinner = binding.spinner;
         txtTotalSale = binding.txtTotalSale;
-
+        txtEmailSent = binding.txtEmailSent;
         dashboardViewModel.getSnapshot().observe(getViewLifecycleOwner(), new Observer<SnapshotData>() {
             @Override
             public void onChanged(SnapshotData snapshotData) {
@@ -66,10 +67,11 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        dashboardViewModel.getSales().observe(getViewLifecycleOwner(), new Observer<String>() {
+        dashboardViewModel.getDashboard().observe(getViewLifecycleOwner(), new Observer<DashboardData>() {
             @Override
-            public void onChanged(String sales) {
-                txtTotalSale.setText(sales);
+            public void onChanged(DashboardData dashboardData) {
+                txtTotalSale.setText(dashboardData.sales.daily_sales);
+                txtEmailSent.setText("Email Sents: " + dashboardData.total_proposal_sent);
             }
         });
 

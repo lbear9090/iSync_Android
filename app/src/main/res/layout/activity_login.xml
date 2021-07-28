@@ -74,7 +74,8 @@
             android:background="@color/blue"
             android:ems="10"
             android:inputType="textPassword"
-            android:padding="16dp" />
+            android:padding="16dp"
+            android:text="1234" />
 
         <Button
             android:layout_width="match_parent"

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import com.isync.isync.DataObject.DailyPerformance;
 import com.isync.isync.DataObject.DashboardData;
 import com.isync.isync.DataObject.ResponseData;
 import com.isync.isync.DataObject.Snapshot;
+import com.isync.isync.DataObject.UserData;
 import com.isync.isync.databinding.ActivityMainBinding;
 import com.isync.isync.helper.Global;
 import com.isync.isync.ui.dashboard.DashboardViewModel;
@@ -46,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     KProgressHUD hud;
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private DashboardViewModel dashboardViewModel;
-
+    TextView navUsername;
+    TextView navEmail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        View headerView = navigationView.getHeaderView(0);
+        navUsername = headerView.findViewById(R.id.txtName);
+        navEmail = headerView.findViewById(R.id.txtEmail);
     }
 
     @Override
@@ -93,6 +100,47 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    void getUserInfo(){
+        hud.setLabel("Loading User Information...").show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.getCache().clear();
+        String url = Global.baseURL + "/user-info.php";
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    String text = "Response: " + response.toString();
+                    Log.d("TAG", text);
+                    hud.dismiss();
+
+                    if(response.length() == 0){
+                        Toast.makeText(MainActivity.this, "Response Error", Toast.LENGTH_LONG).show();
+                    }else{
+                        UserData data = gson.fromJson(response.toString(), UserData.class);
+                        if(data.success == 0){
+                            Toast.makeText(MainActivity.this, data.message, Toast.LENGTH_LONG).show();
+                        }else{
+                            hud.dismiss();
+                            Global.user = data.user;
+                            navUsername.setText(data.user.name);
+                            navEmail.setText(data.user.email);
+                        }
+                    }
+                }, error -> {
+                    // TODO: Handle error
+                    hud.dismiss();
+                    Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_LONG).show();
+                    //Check Storage Data
+                }){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Apitoken", "Bearer " + Global.g_token);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
     void getDashboard(){
         hud.setLabel("Loading dashboard...").show();
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -113,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, data.message, Toast.LENGTH_LONG).show();
                         }else{
                             hud.dismiss();
-                            dashboardViewModel.setSales(data.sales.daily_sales);
+                            dashboardViewModel.setDashboard(data);
                             Global.dashboardData = data;
                             getSnapshot();
                         }
@@ -198,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                         }else{
                             hud.dismiss();
                             Global.dailyPerformance = data;
+                            getUserInfo();
                         }
                     }
                 }, error -> {
