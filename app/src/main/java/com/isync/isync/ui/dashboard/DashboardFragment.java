@@ -57,7 +57,9 @@ public class DashboardFragment extends Fragment {
     LineChart lineChart;
     PieChart pieChart;
     Spinner spinner;
-    TextView txtTotalSale, txtEmailSent;
+    TextView txtTotalSale, txtActivePartnersPro, txtActivePartnersCount, txtActivePartnersInc,
+            txtPartnersWaitingPro, txtPartnersWaitingCount, txtPartnersWaitingInc,
+            txtEmailSentPro, txtEmailSentCount, txtEmailSentInc;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
@@ -69,7 +71,17 @@ public class DashboardFragment extends Fragment {
         pieChart = binding.pieChart;
         spinner = binding.spinner;
         txtTotalSale = binding.txtTotalSale;
-        txtEmailSent = binding.txtEmailSent;
+
+        txtActivePartnersPro = binding.txtActivePartnersPro;
+        txtActivePartnersCount = binding.txtActivePartnersCount;
+        txtActivePartnersInc = binding.txtActivePartnersInc;
+        txtPartnersWaitingPro = binding.txtPartnersWaitingPro;
+        txtPartnersWaitingCount = binding.txtPartnersWaitingCount;
+        txtPartnersWaitingInc = binding.txtPartnersWaitingInc;
+        txtEmailSentPro = binding.txtEmailsSentPro;
+        txtEmailSentCount = binding.txtEmailsSentCount;
+        txtEmailSentInc = binding.txtEmailsSentInc;
+
         dashboardViewModel.getSnapshot().observe(getViewLifecycleOwner(), new Observer<SnapshotData>() {
             @Override
             public void onChanged(SnapshotData snapshotData) {
@@ -115,27 +127,38 @@ public class DashboardFragment extends Fragment {
 
     void updateDashboard(DashboardData dashboardData){
         txtTotalSale.setText(dashboardData.sales.daily_sales);
-        txtEmailSent.setText("Email Sents: " + dashboardData.total_proposal_sent);
-        txtEmailSent.setVisibility(View.GONE);
+        int nAP = 5;
+        int nPW = 3;
+        int nES = dashboardData.total_proposal_sent;
+
+        txtActivePartnersPro.setText(String.format("%.1f%%", (float)(nAP * 100.0f / (nAP + nPW + nES))));
+        txtActivePartnersCount.setText(String.valueOf(nAP));
+        txtActivePartnersInc.setText("+ " + nAP);
+
+        txtPartnersWaitingPro.setText(String.format("%.1f%%", (float)(nPW * 100.0f / (nAP + nPW + nES))));
+        txtPartnersWaitingCount.setText(String.valueOf(nPW));
+        txtPartnersWaitingInc.setText("+ " + nPW);
+
+        txtEmailSentPro.setText(String.format("%.1f%%", (float)(nES * 100.0f / (nAP + nPW + nES))));
+        txtEmailSentCount.setText(String.valueOf(nES));
+        txtEmailSentInc.setText("+ " + nES);
 
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.TRANSPARENT);
         pieChart.setTransparentCircleRadius(0);
         pieChart.getDescription().setEnabled(false);
         Legend l = pieChart.getLegend();
-        l.setTextColor(Color.WHITE);
+        l.setEnabled(false);
+//        l.setTextColor(Color.WHITE);
 
         ArrayList<PieEntry> entries = new ArrayList<>();
 
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
 
-        entries.add(new PieEntry(5,
-                "Active Partners"));
-        entries.add(new PieEntry(3,
-                "Partners Waiting"));
-        entries.add(new PieEntry(dashboardData.total_proposal_sent,
-                "Email Sents"));
+        entries.add(new PieEntry(nAP));
+        entries.add(new PieEntry(nPW));
+        entries.add(new PieEntry(nES));
 
         PieDataSet dataSet = new PieDataSet(entries, "");
 
@@ -159,7 +182,7 @@ public class DashboardFragment extends Fragment {
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextColor(Color.TRANSPARENT);
 //        data.setValueTypeface(tfLight);
         pieChart.setData(data);
 
@@ -256,6 +279,9 @@ public class DashboardFragment extends Fragment {
             lineChart.getAxisRight().setTextColor(Color.WHITE);
             lineChart.getAxisLeft().setTextColor(Color.WHITE);
             // set data
+            Legend l = lineChart.getLegend();
+            l.setEnabled(false);
+
             lineChart.setData(data);
 
             set1.notifyDataSetChanged();
