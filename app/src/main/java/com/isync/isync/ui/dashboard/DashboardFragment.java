@@ -20,17 +20,25 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IFillFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
 import com.isync.isync.DataObject.DashboardData;
 import com.isync.isync.DataObject.SnapshotData;
@@ -47,6 +55,7 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
 
     LineChart lineChart;
+    PieChart pieChart;
     Spinner spinner;
     TextView txtTotalSale, txtEmailSent;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -57,6 +66,7 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         lineChart = binding.chart;
+        pieChart = binding.pieChart;
         spinner = binding.spinner;
         txtTotalSale = binding.txtTotalSale;
         txtEmailSent = binding.txtEmailSent;
@@ -70,8 +80,7 @@ public class DashboardFragment extends Fragment {
         dashboardViewModel.getDashboard().observe(getViewLifecycleOwner(), new Observer<DashboardData>() {
             @Override
             public void onChanged(DashboardData dashboardData) {
-                txtTotalSale.setText(dashboardData.sales.daily_sales);
-                txtEmailSent.setText("Email Sents: " + dashboardData.total_proposal_sent);
+                updateDashboard(dashboardData);
             }
         });
 
@@ -104,6 +113,61 @@ public class DashboardFragment extends Fragment {
         return root;
     }
 
+    void updateDashboard(DashboardData dashboardData){
+        txtTotalSale.setText(dashboardData.sales.daily_sales);
+        txtEmailSent.setText("Email Sents: " + dashboardData.total_proposal_sent);
+        txtEmailSent.setVisibility(View.GONE);
+
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(Color.TRANSPARENT);
+        pieChart.setTransparentCircleRadius(0);
+        pieChart.getDescription().setEnabled(false);
+        Legend l = pieChart.getLegend();
+        l.setTextColor(Color.WHITE);
+
+        ArrayList<PieEntry> entries = new ArrayList<>();
+
+        // NOTE: The order of the entries when being added to the entries array determines their position around the center of
+        // the chart.
+
+        entries.add(new PieEntry(5,
+                "Active Partners"));
+        entries.add(new PieEntry(3,
+                "Partners Waiting"));
+        entries.add(new PieEntry(dashboardData.total_proposal_sent,
+                "Email Sents"));
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+
+        dataSet.setDrawIcons(false);
+
+        dataSet.setSliceSpace(3f);
+        dataSet.setIconsOffset(new MPPointF(0, 40));
+        dataSet.setSelectionShift(5f);
+
+        // add a lot of colors
+
+        ArrayList<Integer> colors = new ArrayList<>();
+
+        colors.add(ColorTemplate.rgb("#07EA83"));
+        colors.add(ColorTemplate.rgb("#2D7EFE"));
+        colors.add(ColorTemplate.rgb("#E20049"));
+
+        dataSet.setColors(colors);
+        //dataSet.setSelectionShift(0f);
+
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.WHITE);
+//        data.setValueTypeface(tfLight);
+        pieChart.setData(data);
+
+        // undo all highlights
+        pieChart.highlightValues(null);
+
+        pieChart.invalidate();
+    }
     public void updateData(SnapshotData snapshot){
         ArrayList<Entry> values = new ArrayList<>();
 
@@ -188,7 +252,7 @@ public class DashboardFragment extends Fragment {
                     return snapshot.labels[(int) value];
                 }
             });
-
+            lineChart.getDescription().setEnabled(false);
             lineChart.getAxisRight().setTextColor(Color.WHITE);
             lineChart.getAxisLeft().setTextColor(Color.WHITE);
             // set data

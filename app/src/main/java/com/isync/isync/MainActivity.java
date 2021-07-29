@@ -1,15 +1,21 @@
 package com.isync.isync;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -36,6 +42,7 @@ import com.isync.isync.helper.Global;
 import com.isync.isync.ui.dashboard.DashboardViewModel;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -53,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         hud = KProgressHUD.create(MainActivity.this).setDimAmount(0.5f);
 
         dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
@@ -61,19 +69,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_dashboard, R.id.nav_sendemail, R.id.nav_setting)
+                R.id.nav_dashboard, R.id.nav_sendemail, R.id.nav_message, R.id.nav_link, R.id.nav_setting)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -83,6 +93,48 @@ public class MainActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
         navUsername = headerView.findViewById(R.id.txtName);
         navEmail = headerView.findViewById(R.id.txtEmail);
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.nav_dashboard:
+                        navController.navigate(R.id.nav_dashboard);
+                        break;
+                    case R.id.nav_sendemail:
+                        break;
+                    case R.id.nav_message:
+//                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+//                        intent.setType("text/plain");
+//                        intent.putExtra(Intent.EXTRA_EMAIL, "cash@advancedvpn.com");
+//
+//                        startActivity(Intent.createChooser(intent, "Send Email"));
+                        String[] emails = {"cash@advancedvpn.com"};
+                        composeEmail(emails, "text");
+
+                        break;
+                    case R.id.nav_link:
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://isync.com/VA/partner-login.php"));
+                        startActivity(browserIntent);
+                        break;
+                    case R.id.nav_setting:
+                        navController.navigate(R.id.nav_setting);
+                        break;
+                }
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+    }
+
+    public void composeEmail(String[] addresses, String subject) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+//        }
     }
 
     @Override
@@ -269,8 +321,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+//        getMenuInflater().inflate(R.menu.main, menu);
+        return false;
     }
 
     @Override
@@ -279,4 +331,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

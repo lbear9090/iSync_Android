@@ -8,12 +8,14 @@
     <fragment
         android:id="@+id/nav_dashboard"
         android:name="com.isync.isync.ui.dashboard.DashboardFragment"
-        android:label="@string/menu_dashboard"
-        tools:layout="@layout/fragment_Dashboard" />
+        tools:layout="@layout/fragment_Dashboard">
+        <action
+            android:id="@+id/action_nav_dashboard_to_nav_setting"
+            app:destination="@id/nav_setting" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_setting"
         android:name="com.isync.isync.ui.setting.SettingFragment"
-        android:label="@string/menu_setting"
         tools:layout="@layout/fragment_setting" />
 </navigation>
