@@ -95,14 +95,14 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -180,7 +180,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -258,7 +258,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -269,7 +269,7 @@
                     android:layout_width="28dp"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/emails_sent"/>
+                    android:src="@drawable/emails_sent" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
