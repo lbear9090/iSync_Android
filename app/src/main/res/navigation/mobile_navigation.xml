@@ -12,10 +12,17 @@
         <action
             android:id="@+id/action_nav_dashboard_to_nav_setting"
             app:destination="@id/nav_setting" />
+        <action
+            android:id="@+id/action_nav_dashboard_to_nav_sendemail"
+            app:destination="@id/nav_sendemail" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_setting"
         android:name="com.isync.isync.ui.setting.SettingFragment"
         tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/nav_sendemail"
+        android:name="com.isync.isync.ui.sendemail.SendEmailFragment"
+        tools:layout="@layout/fragment_sendemail" />
 </navigation>

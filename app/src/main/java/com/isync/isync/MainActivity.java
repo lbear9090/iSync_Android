@@ -1,6 +1,5 @@
 package com.isync.isync;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +27,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.isync.isync.DataObject.DailyPerformance;
 import com.isync.isync.DataObject.DashboardData;
-import com.isync.isync.DataObject.ResponseData;
+import com.isync.isync.DataObject.EmailResult;
+import com.isync.isync.DataObject.EmailTemplate;
 import com.isync.isync.DataObject.Snapshot;
 import com.isync.isync.DataObject.UserData;
 import com.isync.isync.databinding.ActivityMainBinding;
@@ -57,10 +55,20 @@ public class MainActivity extends AppCompatActivity {
     private DashboardViewModel dashboardViewModel;
     TextView navUsername;
     TextView navEmail;
+
+    private static MainActivity mInstance = null;
+
+    public static MainActivity getInstance(){
+        if(mInstance == null){
+            mInstance = new MainActivity();
+        }
+        return mInstance;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mInstance = this;
         hud = KProgressHUD.create(MainActivity.this).setDimAmount(0.5f);
 
         dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
@@ -102,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         navController.navigate(R.id.nav_dashboard);
                         break;
                     case R.id.nav_sendemail:
+                        navController.navigate(R.id.nav_sendemail);
                         break;
                     case R.id.nav_message:
 //                        Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -110,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                        startActivity(Intent.createChooser(intent, "Send Email"));
                         String[] emails = {"cash@advancedvpn.com"};
-                        composeEmail(emails, "text");
+                        composeEmail(emails, "From iSync");
 
                         break;
                     case R.id.nav_link:
@@ -175,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                             Global.user = data.user;
                             navUsername.setText(data.user.name);
                             navEmail.setText(data.user.email);
+                            getEmailTemplates();
                         }
                     }
                 }, error -> {
@@ -318,6 +328,92 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 
+    void getEmailTemplates(){
+        hud.setLabel("Loading Email Templates...").show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.getCache().clear();
+        String url = Global.baseURL + "/email-templates.php";
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    String text = "Response: " + response.toString();
+                    Log.d("TAG", text);
+                    hud.dismiss();
+
+                    if(response.length() == 0){
+                        Toast.makeText(MainActivity.this, "Response Error", Toast.LENGTH_LONG).show();
+                    }else{
+                        EmailTemplate data = gson.fromJson(response.toString(), EmailTemplate.class);
+                        if(data.success == 0){
+                            Toast.makeText(MainActivity.this, data.message, Toast.LENGTH_LONG).show();
+                        }else{
+                            hud.dismiss();
+                            Global.emailTemplate = data;
+                        }
+                    }
+                }, error -> {
+                    // TODO: Handle error
+                    hud.dismiss();
+                    Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_LONG).show();
+                    //Check Storage Data
+                }){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Apitoken", "Bearer " + Global.g_token);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+    public void sendEmail(String email, String templateID, String website){
+        hud.setLabel("Sending Email...").show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.getCache().clear();
+        String url = Global.baseURL + "/send-affiliate-email.php";
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("email_to", email);
+        params.put("email_template", templateID);
+        params.put("website", website);
+
+        JSONObject parameters = new JSONObject(params);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.POST, url, parameters, response -> {
+                    String text = "Response: " + response.toString();
+                    Log.d("TAG", text);
+                    hud.dismiss();
+
+                    if(response.length() == 0){
+                        Toast.makeText(MainActivity.this, "Response Error", Toast.LENGTH_LONG).show();
+                    }else{
+                        EmailResult data = gson.fromJson(response.toString(), EmailResult.class);
+                        Toast.makeText(MainActivity.this, data.message, Toast.LENGTH_LONG).show();
+                    }
+                }, error -> {
+                    // TODO: Handle error
+                    hud.dismiss();
+                    Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_LONG).show();
+                    //Check Storage Data
+                }){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Apitoken", "Bearer " + Global.g_token);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+    }
+
+    public void onNotif(View v)
+    {
+        Intent i = new Intent(this, NotificationActivity.class);
+        startActivity(i);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

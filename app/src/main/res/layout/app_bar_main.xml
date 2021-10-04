@@ -41,7 +41,8 @@
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/notif" />
+                android:src="@drawable/notif"
+                android:onClick="onNotif"/>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
