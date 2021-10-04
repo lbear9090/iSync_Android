@@ -47,13 +47,15 @@
                 android:entries="@array/period"
                 android:popupBackground="@android:drawable/alert_dark_frame"
                 android:spinnerMode="dropdown"
-                android:theme="@style/TextViewTheme" />
+                android:theme="@style/TextViewTheme"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/textView5"
@@ -70,6 +72,14 @@
                 android:text="-1.12%"
                 android:textColor="@color/red" />
         </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/gray" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
@@ -170,7 +180,8 @@
                         android:layout_height="wrap_content"
                         android:text="+ 0"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/chartgreen" />
+                        android:textColor="@color/chartgreen"
+                        android:visibility="invisible" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -248,7 +259,8 @@
                         android:layout_height="wrap_content"
                         android:text="+ 0"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/chartgreen" />
+                        android:textColor="@color/chartgreen"
+                        android:visibility="invisible" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -326,7 +338,8 @@
                         android:layout_height="wrap_content"
                         android:text="+ 0"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/chartgreen" />
+                        android:textColor="@color/chartgreen"
+                        android:visibility="invisible" />
                 </LinearLayout>
             </LinearLayout>
 
