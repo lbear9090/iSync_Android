@@ -4,12 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../DATA/AndroidSDK/platforms/android-30/data/res/layout/simple_spinner_item.xml" value="0.28020833333333334" />
+        <entry key="app/src/main/res/drawable/ic_m_setting.xml" value="0.38333333333333336" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.189209726443769" />
         <entry key="app/src/main/res/layout/activity_notification.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.307518115942029" />
-        <entry key="app/src/main/res/layout/fragment_sendemail.xml" value="0.33967391304347827" />
+        <entry key="app/src/main/res/layout/fragment_sendemail.xml" value="0.16" />
         <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.25" />
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/notification_item.xml" value="0.28020833333333334" />
@@ -28,7 +29,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.1" />
+        <option name="scale" value="0.16" />
       </ProjectState>
     </option>
   </component>

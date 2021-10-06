@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,23 +19,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.isync.isync.DataObject.EmailTemplateData;
-import com.isync.isync.DataObject.UserData;
 import com.isync.isync.MainActivity;
 import com.isync.isync.R;
 import com.isync.isync.databinding.FragmentSendemailBinding;
 import com.isync.isync.helper.Global;
-import com.isync.isync.ui.setting.SettingViewModel;
-import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SendEmailFragment extends Fragment {
 
