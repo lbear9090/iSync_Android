@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -20,18 +21,19 @@
         android:paddingStart="16dp">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/txtNotification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="notification detail"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/white"
-            tools:text="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat." />
+            android:textColor="@color/white" />
 
         <TextView
+            android:id="@+id/txtTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="5 mins ago"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/gray"
-            tools:text="5 mins ago" />
+            android:textColor="@color/gray" />
     </LinearLayout>
 </LinearLayout>
